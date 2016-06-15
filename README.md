@@ -98,6 +98,7 @@ module.exports = function(app) {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   app.get('/api/codes', function (req, res) {    
+    // 直接返回正确状态和测试数据
       return res.status(200).send({
           codes: [
               { id:1, description: '为了测试创建一个简单的后端服务程序，使用的是Node，然后写死一些测试数据。就没必要动牛刀，创建一个数据库了！' },
@@ -135,7 +136,7 @@ export default Ember.Route.extend({
 
 重新启动项目。检查项目是否有错误！如果启动没问题，那么访问[http://localhost:4200/secret](http://localhost:4200/secret)你也会得到如下截图的效果。
 
-![效果截图1]()
+![效果截图1](http://blog.ddlisting.com/content/images/2016/06/16061501.png)
 
 从截图中可以看到发送一个请求`http://localhost:4200/api/codes`，并且从这个请求中获取到服务端返回的数据。你可以直接把这个URL放到浏览器地址栏执行，可以清楚的看到返回的数据。数据的格式是普通的json格式。
 
@@ -163,7 +164,7 @@ app.get('/api/codes', function(req, res) {
 注意：_代码只列出主要部分，其他的不变。_
 在代码中加入了简单的权限校验，通常`authorization`的值应该是变化的或者是每个用户都是唯一的，比如oauth2中的`access token`。当你再次访问之前的资源[http://localhost:4200/secret](http://localhost:4200/secret)可以看到，报错了，提示无权访问。如下截图：
 
-![无权访问]()
+![无权访问](http://blog.ddlisting.com/content/images/2016/06/16061502.png)
 
 显然这样的校验是没啥意义的，那么如果你也想模拟Oauth2也生成一个唯一的`access token`，你可以请求之前首先获取一个`access token`。但是这个`access token`不是随便就能获取的，需要通过登录成功后才能获取到。下面加入模拟登录的程序。仍然是修改`server/index.js`。
 
@@ -309,15 +310,21 @@ export default Ember.Route.extend({
 ```
 项目重启完毕(是手动终止在启动，否则会出现service未定义的情况)之后可以看到界面直接跳转到了登录页面，实现了简单的权限拦截（无权先登录）。
 
+![登录](http://blog.ddlisting.com/content/images/2016/06/16061503.png)
+
 **未登录直接点击链接“点击查看有权才能访问的资源”效果**
 
-![未登录直接点击链接“点击查看有权才能访问的资源”效果截图]()
+![未登录直接点击链接“点击查看有权才能访问的资源”效果截图](http://blog.ddlisting.com/content/images/2016/06/16061504.png)
 
 可以看到浏览器控制台打印信息显示资源无权访问，返回的代码是`403`。
 
+输入错误的用户名或密码的情况：
+
+![用户名密码错误](http://blog.ddlisting.com/content/images/2016/06/16061506.png)
+
 **登录成功再访问授权资源**
 
-![登录成功再访问授权资源]()
+![登录成功再访问授权资源](http://blog.ddlisting.com/content/images/2016/06/16061505.png)
 
 登录成功之后再点击链接可以正常访问了，并且正确看到后端返回的数据。
 
@@ -366,8 +373,6 @@ export default Ember.Component.extend({
 对于退出事件的处理就比较简单粗暴了，直接刷新页面，由于属性`authManager`的值已经设置为`null`所以发起请求的时候是无权限的会再次触发`error`事件，然后跳转到登录页面。
 
 到这里，基本上实现了一个简单的权限控制功能。例子比较简单，但是处理的思路大体上是这样做的，能实现这样的功能是基于`service`类的特性。也希望读者能通过本例理解懂得如何使用`service`。
-
-项目代码：[https://github.com/ubuntuvim/secretcodez](https://github.com/ubuntuvim/secretcodez)，有疑问欢迎给我留言。
 
 
 
